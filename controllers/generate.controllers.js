@@ -14,9 +14,10 @@ const generate = async (req, res) => {
 
         let result = await model.generateContent(prompt);
         responseText = result.response.text();
-        console.log(responseText)
+
         const subjectMatch = responseText.match(/"subject":\s*"([^"]+)"/);
         const bodyMatch = responseText.match(/"body":\s*"([^"]+)"/);
+
         if (subjectMatch && bodyMatch) {
             res.status(200).json({ success: true, subject: subjectMatch[1], body: bodyMatch[1] });
         }
