@@ -24,5 +24,5 @@ app.post('/api/save', saveDraft)
 
 app.listen(PORT, () => {
     console.log(`Server is Running on Port ${PORT}`)
-    // connectDB()
+    connectDB()
 })
