@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import handleGenerate from '../utils/handleGenerate';
-import handleSendMail from '../utils/handleSendMail';
 
 const App = () => {
 
@@ -52,6 +50,20 @@ const App = () => {
         }
     }
 
+    const handleSaveDraft = async (e) => {
+        e.preventDefault();
+        let response = await fetch('/api/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                body: form.body,
+                to: form.to,
+                subject: form.subject
+            })
+        })
+    }
 
     return (
         <div className=" min-h-screen justify-items-center items-center bg-gray-900 p-5 text-gray-400 flex gap-2 flex-col">
@@ -88,8 +100,12 @@ const App = () => {
                     >
                         Send
                     </button>
-
                 </div>
+                <button onClick={handleSaveDraft}
+                    className=" bg-yellow-500 text-white p-2 rounded-lg m-2 hover:bg-yellow-600 hover:text-gray-50"
+                >
+                    Save Draft
+                </button>
             </form>
         </div >
     )
