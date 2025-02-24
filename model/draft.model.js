@@ -12,7 +12,6 @@ const draftSchema = new mongoose.Schema({
     },
     to: {
         type: String,
-        required: true
     }
 
 }, { timestamps: true })

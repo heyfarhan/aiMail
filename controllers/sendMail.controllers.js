@@ -11,21 +11,24 @@ const transporter = nodemailer.createTransport({
 const sendMail = async (req, res) => {
 
     const { to, subject, body } = req.body;
-
-    const mailOptions = {
-        from: process.env.NODEMAILER_USER,
-        to: to,
-        subject: subject,
-        text: body
-    };
-
     try {
+
+        if (!to.length || !subject.length || !body.length) {
+            throw new Error('Provide all the Details..')
+        }
+
+        const mailOptions = {
+            from: process.env.NODEMAILER_USER,
+            to: to,
+            subject: subject,
+            text: body
+        };
+
         const info = await transporter.sendMail(mailOptions);
         console.log('Message sent: %s', info.messageId);
         res.send({ success: true })
-    } catch (error) {
-        console.error('Error sending email:', error);
-        res.send({ success: false })
+    } catch (err) {
+        res.send({ success: false, message: err.message })
     }
 
 }

@@ -18580,6 +18580,7 @@ const App = ()=>{
         subject: null,
         body: ''
     });
+    const [loading, setLoading] = (0, _react.useState)(false);
     const handleChange = (e)=>{
         setForm({
             ...form,
@@ -18588,53 +18589,77 @@ const App = ()=>{
     };
     const handleGenerate = async (e)=>{
         e.preventDefault();
-        let response = await fetch('/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                body: form.body
-            })
-        });
-        let data = await response.json();
-        const formattedBody = data?.body?.replace(/\\n/g, '\n');
-        const formattedSubject = data?.subject?.replace(/\\n/g, '\n');
-        setForm({
-            ...form,
-            subject: `${formattedSubject}`,
-            body: `${formattedBody}`
-        });
+        setLoading(()=>true);
+        try {
+            let response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    body: form.body
+                })
+            });
+            let data = await response.json();
+            const formattedBody = data?.body?.replace(/\\n/g, '\n');
+            const formattedSubject = data?.subject?.replace(/\\n/g, '\n');
+            setForm({
+                ...form,
+                subject: `${formattedSubject}`,
+                body: `${formattedBody}`
+            });
+            if (data.success === true) alert("Generated Mail Successfully \uD83C\uDF89");
+            else throw new Error(data.message);
+        } catch (err) {
+            alert(`${err} \u{1F615}`);
+        }
+        setLoading(()=>false);
     };
     const handleSendMail = async (e)=>{
         e.preventDefault();
-        let response = await fetch('/api/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                body: form.body,
-                to: form.to,
-                subject: form.subject
-            })
-        });
-        let data = await response.json();
-        if (data.success === true) alert("Mail Send Successfully \uD83C\uDF89");
+        setLoading(()=>true);
+        try {
+            let response = await fetch('/api/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    body: form.body,
+                    to: form.to,
+                    subject: form.subject
+                })
+            });
+            let data = await response.json();
+            if (data.success === true) alert("Mail Send Successfully \uD83C\uDF89");
+            else throw new Error(data.message);
+        } catch (err) {
+            alert(`${err} \u{1F615}`);
+        }
+        setLoading(()=>false);
     };
     const handleSaveDraft = async (e)=>{
         e.preventDefault();
-        let response = await fetch('/api/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                body: form.body,
-                to: form.to,
-                subject: form.subject
-            })
-        });
+        setLoading(()=>true);
+        try {
+            let response = await fetch('/api/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    body: form.body,
+                    to: form.to,
+                    subject: form.subject
+                })
+            });
+            let data = await response.json();
+            if (data.success === true) alert("Draft Save Successfully \uD83C\uDF89");
+            else throw new Error(data.message);
+        } catch (err) {
+            alert(`${err} \u{1F615}`);
+        }
+        setLoading(()=>false);
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: " min-h-screen justify-items-center items-center bg-gray-900 p-5 text-gray-400 flex gap-2 flex-col",
@@ -18644,11 +18669,11 @@ const App = ()=>{
                 children: "AI Mail Generator"
             }, void 0, false, {
                 fileName: "src/Components/App.js",
-                lineNumber: 70,
+                lineNumber: 105,
                 columnNumber: 13
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
-                className: "flex flex-col justify-center h-2/3 w-1/2 p-5 gap-2",
+                className: "flex flex-col justify-center h-2/3 w-[95vw] sm:w-[80vw] lg:w-[60vw] p-5 gap-2",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                         htmlFor: "to",
@@ -18656,7 +18681,7 @@ const App = ()=>{
                         children: "To :"
                     }, void 0, false, {
                         fileName: "src/Components/App.js",
-                        lineNumber: 73,
+                        lineNumber: 108,
                         columnNumber: 17
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
@@ -18670,7 +18695,7 @@ const App = ()=>{
                         className: " p-2 m-2 rounded-lg bg-gray-300 text-black outline-none"
                     }, void 0, false, {
                         fileName: "src/Components/App.js",
-                        lineNumber: 74,
+                        lineNumber: 109,
                         columnNumber: 17
                     }, undefined),
                     form.subject !== null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
@@ -18681,7 +18706,7 @@ const App = ()=>{
                                 children: "Subject :"
                             }, void 0, false, {
                                 fileName: "src/Components/App.js",
-                                lineNumber: 79,
+                                lineNumber: 114,
                                 columnNumber: 25
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
@@ -18691,10 +18716,11 @@ const App = ()=>{
                                 onChange: handleChange,
                                 rows: 2,
                                 maxLength: 1000,
+                                placeholder: "Subject of the Email",
                                 className: " p-2 m-2 rounded-lg bg-gray-300 text-black outline-none"
                             }, void 0, false, {
                                 fileName: "src/Components/App.js",
-                                lineNumber: 80,
+                                lineNumber: 115,
                                 columnNumber: 25
                             }, undefined)
                         ]
@@ -18705,7 +18731,7 @@ const App = ()=>{
                         children: "Body :"
                     }, void 0, false, {
                         fileName: "src/Components/App.js",
-                        lineNumber: 87,
+                        lineNumber: 122,
                         columnNumber: 17
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
@@ -18716,63 +18742,74 @@ const App = ()=>{
                         rows: 10,
                         cols: 50,
                         maxLength: 1000,
-                        placeholder: `Write Important Key Points or an Overview \nFor What ? You Want to Generate a Email \neg: Job Application Post Mern Stack with I have 2 Yr Expreince ....`,
+                        placeholder: `Write Important Key Points or an Overview \nFor What ? You Want to Generate an Email \neg: Job Application for MERN Stack....`,
                         className: "overflow-auto whitespace-pre-line p-2 m-2 rounded-lg bg-gray-300 text-black outline-none"
                     }, void 0, false, {
                         fileName: "src/Components/App.js",
-                        lineNumber: 88,
+                        lineNumber: 123,
                         columnNumber: 17
+                    }, undefined),
+                    loading && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "self-center",
+                        children: "Loading.."
+                    }, void 0, false, {
+                        fileName: "src/Components/App.js",
+                        lineNumber: 126,
+                        columnNumber: 29
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "flex",
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                                 onClick: handleGenerate,
-                                className: "w-1/2 bg-blue-500 text-white p-2 rounded-lg m-2 hover:bg-blue-800 hover:text-gray-50",
+                                disabled: loading,
+                                className: "w-1/2 bg-blue-500 text-white p-2 rounded-lg m-2 hover:bg-blue-800 hover:text-gray-50 disabled:opacity-20",
                                 children: "Generate"
                             }, void 0, false, {
                                 fileName: "src/Components/App.js",
-                                lineNumber: 93,
+                                lineNumber: 129,
                                 columnNumber: 21
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                                 onClick: handleSendMail,
-                                className: "w-1/2 bg-green-500 text-white p-2 rounded-lg m-2 hover:bg-green-600 hover:text-gray-50",
+                                disabled: loading,
+                                className: "w-1/2 bg-green-500 text-white p-2 rounded-lg m-2 hover:bg-green-600 hover:text-gray-50 disabled:opacity-20",
                                 children: "Send"
                             }, void 0, false, {
                                 fileName: "src/Components/App.js",
-                                lineNumber: 98,
+                                lineNumber: 134,
                                 columnNumber: 21
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/Components/App.js",
-                        lineNumber: 91,
+                        lineNumber: 127,
                         columnNumber: 17
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                         onClick: handleSaveDraft,
-                        className: " bg-yellow-500 text-white p-2 rounded-lg m-2 hover:bg-yellow-600 hover:text-gray-50",
+                        disabled: loading,
+                        className: " bg-yellow-500 text-white p-2 rounded-lg m-2 hover:bg-yellow-600 hover:text-gray-50 disabled:opacity-20",
                         children: "Save Draft"
                     }, void 0, false, {
                         fileName: "src/Components/App.js",
-                        lineNumber: 104,
+                        lineNumber: 140,
                         columnNumber: 17
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/Components/App.js",
-                lineNumber: 71,
+                lineNumber: 106,
                 columnNumber: 13
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/Components/App.js",
-        lineNumber: 69,
+        lineNumber: 104,
         columnNumber: 9
     }, undefined);
 };
-_s(App, "Xm9/WWTua3QrwPcwg515Tyn9eK0=");
+_s(App, "iWhaqqmk+/WrLsYBZ4WTXxFJvfs=");
 _c = App;
 exports.default = App;
 var _c;

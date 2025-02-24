@@ -12,6 +12,10 @@ const generate = async (req, res) => {
     let responseText;
     try {
 
+        if (!body.length) {
+            throw new Error("Please Provide Some Details About Email !!!")
+        }
+
         let result = await model.generateContent(prompt);
         responseText = result.response.text();
 
@@ -23,7 +27,7 @@ const generate = async (req, res) => {
         }
 
     } catch (err) {
-        res.status(400).json({ success: false, message: err });
+        res.status(400).json({ success: false, message: err.message, body: '', subject: '' });
 
     }
 }
